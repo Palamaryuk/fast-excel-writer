@@ -14,7 +14,7 @@
         "office 2007"
     ],
     "type": "library",
-    "homepage": "https://github.com/aVadim483/fast-excel-writer",
+    "homepage": "https://github.com/Palamaryuk/fast-excel-writer",
     "license": "MIT",
     "autoload": {
         "psr-4": {
