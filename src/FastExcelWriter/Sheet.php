@@ -201,7 +201,7 @@ class Sheet implements InterfaceSheetWriter
                 'workbookViewId' => '0',
                 'view' => 'normal',
                 'topLeftCell' => 'A1',
-            ]
+            ],
         ];
 
         $this->cells = [
@@ -244,7 +244,8 @@ class Sheet implements InterfaceSheetWriter
             'Undefined property: ' . get_class() . '::$' . $name .
             ' (call in file ' . $trace[0]['file'] .
             ' on line ' . $trace[0]['line'] . ') ',
-            E_USER_NOTICE);
+            E_USER_NOTICE
+        );
 
         return null;
     }
@@ -302,21 +303,21 @@ class Sheet implements InterfaceSheetWriter
     }
 
     /**
-    * @return int
-    */
+     * @return int
+     */
     public function getCurrentRowId(): int
     {
         return $this->currentRowIdx;
     }
 
     /**
-    * @return int
-    */
+     * @return int
+     */
     public function getCurrentColId(): int
     {
         return $this->currentColIdx;
     }
-    
+
     /**
      * @return array
      */
@@ -411,12 +412,12 @@ class Sheet implements InterfaceSheetWriter
     }
 
     /**
-     * @deprecated
-     *
      * @param string $option
      * @param mixed $value
      *
      * @return $this
+     * @deprecated
+     *
      */
     public function setPageOptions(string $option, $value): Sheet
     {
@@ -478,9 +479,10 @@ class Sheet implements InterfaceSheetWriter
         if (strtolower($numPage) === 'auto') {
             $numPage = 0;
         }
-        if ($numPage >=0) {
+        if ($numPage >= 0) {
             $this->bottomNodesOptions['pageSetup']['fitToWidth'] = (int)$numPage;
         }
+
         return $this;
     }
 
@@ -494,9 +496,10 @@ class Sheet implements InterfaceSheetWriter
         if (strtolower($numPage) === 'auto') {
             $numPage = 0;
         }
-        if ($numPage >=0) {
+        if ($numPage >= 0) {
             $this->bottomNodesOptions['pageSetup']['fitToHeight'] = (int)$numPage;
         }
+
         return $this;
     }
 
@@ -569,8 +572,7 @@ class Sheet implements InterfaceSheetWriter
                 $this->setFreezeRows($dimension['row'] - 1);
                 $this->setFreezeColumns($dimension['col'] - 1);
             }
-        }
-        else {
+        } else {
             $this->setFreezeRows((int)$freezeRows);
             $this->setFreezeColumns((int)$freezeColumns);
         }
@@ -615,8 +617,7 @@ class Sheet implements InterfaceSheetWriter
         }
         if ($address['cell1'] === $address['cell2']) {
             $this->activeRef = $this->activeCell = $address['cell1'];
-        }
-        else {
+        } else {
             $this->activeCell = $address['cell1'];
             $this->activeRef = $address['cell1'] . ':' . $address['cell2'];
         }
@@ -636,8 +637,7 @@ class Sheet implements InterfaceSheetWriter
         if ($row >= 0) {
             if (empty($row)) {
                 $this->autoFilter = null;
-            }
-            else {
+            } else {
                 $this->autoFilter = Excel::cellAddress($row, $col);
             }
         }
@@ -677,8 +677,7 @@ class Sheet implements InterfaceSheetWriter
                 }
             }
             $result = array_combine($keys, array_values($columns));
-        }
-        else {
+        } else {
             $result = $columns;
         }
 
@@ -709,13 +708,11 @@ class Sheet implements InterfaceSheetWriter
             foreach ($options as $col => $colOptions) {
                 if ($colOptions) {
                     $options[$col] = Style::normalize($colOptions);
-                }
-                else {
+                } else {
                     $options[$col] = null;
                 }
             }
-        }
-        else {
+        } else {
             $options = [];
             $colNumbers = Excel::colNumberRange($arg1);
             if ($colNumbers) {
@@ -728,26 +725,23 @@ class Sheet implements InterfaceSheetWriter
         $options = array_filter($options);
         if ($options) {
             $options = $this->normalizeColKeys($options);
-            foreach($options as $col => $colOptions) {
+            foreach ($options as $col => $colOptions) {
                 $style = [];
                 if (isset($colOptions['options']['width'])) {
                     $this->setColWidth($col, $colOptions['options']['width']);
                 }
-                foreach($colOptions as $optionName => $optionValues) {
+                foreach ($colOptions as $optionName => $optionValues) {
                     if (is_array($optionValues)) {
                         foreach ($optionValues as $key => $val) {
                             if ($key === 'width') {
                                 $this->setColWidth($col, $val);
-                            }
-                            elseif ($key === 'formula') {
+                            } elseif ($key === 'formula') {
                                 $this->setColFormula($col, $val);
-                            }
-                            else {
+                            } else {
                                 $style[$optionName][$key] = $val;
                             }
                         }
-                    }
-                    else {
+                    } else {
                         $style[$optionName] = $optionValues;
                     }
                 }
@@ -785,7 +779,7 @@ class Sheet implements InterfaceSheetWriter
     public function setColVisible($col, bool $val): Sheet
     {
         $colIndexes = Excel::colIndexRange($col);
-        foreach($colIndexes as $colIdx) {
+        foreach ($colIndexes as $colIdx) {
             if ($colIdx >= 0) {
                 $this->_setColAttributes($colIdx, ['hidden' => (int)$val]);
             }
@@ -801,7 +795,6 @@ class Sheet implements InterfaceSheetWriter
      */
     public function setColHidden($col): Sheet
     {
-
         return $this->setColVisible($col, false);
     }
 
@@ -817,12 +810,11 @@ class Sheet implements InterfaceSheetWriter
     public function setColWidth($col, $width, ?bool $min = false): Sheet
     {
         $colIndexes = Excel::colIndexRange($col);
-        foreach($colIndexes as $colIdx) {
+        foreach ($colIndexes as $colIdx) {
             if ($colIdx >= 0) {
                 if (strtolower($width) === 'auto') {
                     $this->colStyles[$colIdx]['options']['width-auto'] = true;
-                }
-                elseif ($width !== null) {
+                } elseif ($width !== null) {
                     $width = ($width ? Style::numFloat($width) : 0);
                     if (is_numeric($width)) {
                         if ($min) {
@@ -830,8 +822,7 @@ class Sheet implements InterfaceSheetWriter
                             if (!isset($this->colAttributes[$colIdx]['width']) || $this->colAttributes[$colIdx]['width'] < $width) {
                                 $this->_setColAttributes($colIdx, ['width' => $width, 'customWidth' => '1']);
                             }
-                        }
-                        elseif (empty($this->colMinWidths[$colIdx]) || $this->colMinWidths[$colIdx] <= $width) {
+                        } elseif (empty($this->colMinWidths[$colIdx]) || $this->colMinWidths[$colIdx] <= $width) {
                             $this->_setColAttributes($colIdx, ['width' => $width, 'customWidth' => '1']);
                         }
                     }
@@ -921,7 +912,7 @@ class Sheet implements InterfaceSheetWriter
     public function setColOutlineLevel($col, int $outlineLevel): Sheet
     {
         $colIndexes = Excel::colIndexRange($col);
-        foreach($colIndexes as $colIdx) {
+        foreach ($colIndexes as $colIdx) {
             if ($colIdx >= 0) {
                 $attr = ['outlineLevel' => $outlineLevel];
                 if (!isset($this->colAttributes[$colIdx]['width'])) {
@@ -932,7 +923,6 @@ class Sheet implements InterfaceSheetWriter
         }
 
         return $this;
-
     }
 
     /**
@@ -997,13 +987,12 @@ class Sheet implements InterfaceSheetWriter
         }
 
         $colIndexes = Excel::colIndexRange($col);
-        foreach($colIndexes as $colIdx) {
+        foreach ($colIndexes as $colIdx) {
             if ($colIdx >= 0) {
                 $style = Style::normalize($style);
                 if (!empty($this->colStyles[$colIdx])) {
                     $this->colStyles[$colIdx] = array_replace_recursive($this->colStyles[$colIdx], $style);
-                }
-                else {
+                } else {
                     $this->colStyles[$colIdx] = $style;
                 }
             }
@@ -1033,7 +1022,7 @@ class Sheet implements InterfaceSheetWriter
                 $formula = '=' . $formula;
             }
         }
-        foreach($colIndexes as $colIdx) {
+        foreach ($colIndexes as $colIdx) {
             if ($colIdx >= 0) {
                 $this->colFormulas[$colIdx] = $formula;
             }
@@ -1089,8 +1078,7 @@ class Sheet implements InterfaceSheetWriter
                 $style = Style::normalize($style);
                 if (empty($this->fieldStyles[$field])) {
                     $this->fieldStyles[$field] = $style;
-                }
-                else {
+                } else {
                     $this->fieldStyles[$field] = array_merge_recursive($this->fieldStyles[$field], $style);
                 }
             }
@@ -1133,11 +1121,9 @@ class Sheet implements InterfaceSheetWriter
         if ($key === 'height') {
             $this->rowAttributes[$rowIdx]['customHeight'] = 1;
             $this->rowAttributes[$rowIdx]['ht'] = $val;
-        }
-        elseif ($key === 'hidden' || $key === 'outlineLevel' || $key === 'collapsed') {
+        } elseif ($key === 'hidden' || $key === 'outlineLevel' || $key === 'collapsed') {
             $this->rowAttributes[$rowIdx][$key] = $val;
-        }
-        else {
+        } else {
             $this->rowSettings[$rowIdx][$key] = $val;
         }
     }
@@ -1156,11 +1142,9 @@ class Sheet implements InterfaceSheetWriter
             foreach ($rowNum as $row) {
                 $this->setRowHeight($row, $height);
             }
-        }
-        elseif (is_numeric($rowNum)) {
+        } elseif (is_numeric($rowNum)) {
             $this->_setRowSettings($rowNum, 'height', Writer::floatStr($height));
-        }
-        else {
+        } else {
             $address = $this->_parseAddress($rowNum, null, true);
             for ($row = $address['rowNum1']; $row <= $address['rowNum2']; $row++) {
                 $this->setRowHeight($row, $height);
@@ -1182,6 +1166,7 @@ class Sheet implements InterfaceSheetWriter
         foreach ($heights as $rowNum => $rowHeight) {
             $this->setRowHeight($rowNum, $rowHeight);
         }
+
         return $this;
     }
 
@@ -1199,11 +1184,9 @@ class Sheet implements InterfaceSheetWriter
             foreach ($rowNum as $row) {
                 $this->setRowVisible($row, $visible);
             }
-        }
-        elseif (is_numeric($rowNum)) {
+        } elseif (is_numeric($rowNum)) {
             $this->_setRowSettings($rowNum, 'hidden', $visible ? 0 : 1);
-        }
-        else {
+        } else {
             $address = $this->_parseAddress($rowNum, null, true);
             for ($row = $address['rowNum1']; $row <= $address['rowNum2']; $row++) {
                 $this->setRowVisible($row, $visible);
@@ -1222,7 +1205,6 @@ class Sheet implements InterfaceSheetWriter
      */
     public function setRowHidden($rowNum): Sheet
     {
-
         return $this->setRowVisible($rowNum, false);
     }
 
@@ -1243,8 +1225,7 @@ class Sheet implements InterfaceSheetWriter
             foreach ($rowNum as $row) {
                 $this->setRowOutlineLevel($row, $outlineLevel, $collapsed);
             }
-        }
-        elseif (is_numeric($rowNum)) {
+        } elseif (is_numeric($rowNum)) {
             $this->_setRowSettings($rowNum, 'outlineLevel', $outlineLevel);
             if ($collapsed !== null && !isset($this->rowOutlineCollapsed[$rowNum])) {
                 $this->rowOutlineCollapsed[$outlineLevel] = $collapsed;
@@ -1252,8 +1233,7 @@ class Sheet implements InterfaceSheetWriter
             if (!empty($this->rowOutlineCollapsed[$outlineLevel])) {
                 $this->_setRowSettings($rowNum, 'hidden', 1);
             }
-        }
-        else {
+        } else {
             $address = $this->_parseAddress($rowNum, null, true);
             for ($row = $address['rowNum1']; $row <= $address['rowNum2']; $row++) {
                 $this->setRowOutlineLevel($row, $outlineLevel, $collapsed);
@@ -1313,18 +1293,15 @@ class Sheet implements InterfaceSheetWriter
     {
         if ($arg2 === null) {
             $options = $arg1;
-        }
-        else {
+        } else {
             if (is_string($arg1) && preg_match('/^(\d+):(\d+)$/', $arg1, $m)) {
                 $options = [];
                 for ($row = $m[1]; $row <= $m[2]; $row++) {
                     $options[$row] = $arg2;
                 }
-            }
-            elseif (is_numeric($arg1)) {
+            } elseif (is_numeric($arg1)) {
                 $options[(int)$arg1] = $arg2;
-            }
-            else {
+            } else {
                 $options = [];
             }
         }
@@ -1338,12 +1315,12 @@ class Sheet implements InterfaceSheetWriter
                 }
                 if (isset($this->rowStyles[$rowIdx])) {
                     $this->rowStyles[$rowIdx] = array_replace_recursive($this->rowStyles[$rowIdx], $rowOptions);
-                }
-                else {
+                } else {
                     $this->rowStyles[$rowIdx] = $rowOptions;
                 }
             }
         }
+
         return $this;
     }
 
@@ -1406,7 +1383,7 @@ class Sheet implements InterfaceSheetWriter
 
         // add auto formulas of columns
         if ($this->colFormulas && $row) {
-            foreach($this->colFormulas as $colIdx => $formula) {
+            foreach ($this->colFormulas as $colIdx => $formula) {
                 if (!isset($row[$colIdx])) {
                     $row[$colIdx] = $formula;
                 }
@@ -1419,10 +1396,11 @@ class Sheet implements InterfaceSheetWriter
                 if ($this->defaultStyle) {
                     $this->sheetStylesSummary = [
                         'general_style' => Style::mergeStyles([$this->excel->style->defaultStyle, $this->defaultStyle]),
-                        'hyperlink_style' => Style::mergeStyles([$this->excel->style->hyperlinkStyle, $this->defaultStyle]),
+                        'hyperlink_style' => Style::mergeStyles(
+                            [$this->excel->style->hyperlinkStyle, $this->defaultStyle]
+                        ),
                     ];
-                }
-                else {
+                } else {
                     $this->sheetStylesSummary = [
                         'general_style' => $this->excel->style->defaultStyle,
                         'hyperlink_style' => $this->excel->style->hyperlinkStyle,
@@ -1435,8 +1413,7 @@ class Sheet implements InterfaceSheetWriter
                     if (!isset($this->colStylesSummary[$colIdx])) {
                         if (!isset($this->colStyles[$colIdx])) {
                             $this->colStylesSummary[$colIdx] = $this->sheetStylesSummary;
-                        }
-                        else {
+                        } else {
                             $this->colStylesSummary[$colIdx] = [
                                 'general_style' => Style::mergeStyles([
                                     $this->sheetStylesSummary['general_style'],
@@ -1459,8 +1436,7 @@ class Sheet implements InterfaceSheetWriter
                     if (isset($cellsOptions[$colIdx]['_xf_id'])) {
                         $cellStyleIdx = $cellsOptions[$colIdx]['_xf_id'];
                         $numberFormatType = $cellsOptions[$colIdx]['number_format_type'] ?? 'n_auto';
-                    }
-                    else {
+                    } else {
                         // Define cell style index and number format
                         if (!empty($this->rowStyles[$rowIdx])) {
                             $styleStack[] = $this->rowStyles[$rowIdx];
@@ -1476,20 +1452,23 @@ class Sheet implements InterfaceSheetWriter
                         }
                         if (count($styleStack) > 1) {
                             $cellStyle = Style::mergeStyles($styleStack);
-                        }
-                        else {
+                        } else {
                             $cellStyle = $styleStack ? $styleStack[0] : [];
                         }
                         if (!empty($cellStyle['format']['format-pattern']) && !empty($this->excel->style->defaultFormatStyles[$cellStyle['format']['format-pattern']])) {
-                            $cellStyle = Style::mergeStyles([$this->excel->style->defaultFormatStyles[$cellStyle['format']['format-pattern']], $cellStyle]);
+                            $cellStyle = Style::mergeStyles(
+                                [
+                                    $this->excel->style->defaultFormatStyles[$cellStyle['format']['format-pattern']],
+                                    $cellStyle,
+                                ]
+                            );
                         }
 
                         if (isset($cellStyle['hyperlink'])) {
                             if (!empty($cellStyle['hyperlink'])) {
                                 if (is_string($cellStyle['hyperlink'])) {
                                     $link = $cellStyle['hyperlink'];
-                                }
-                                else {
+                                } else {
                                     $link = $cellValue;
                                 }
                                 $cellValue = [
@@ -1507,9 +1486,12 @@ class Sheet implements InterfaceSheetWriter
                         $styleHash = $cellStyle ? json_encode($cellStyle) : '';
                         if (!isset($_styleCache[$styleHash])) {
                             $cellStyleIdx = $this->excel->style->addStyle($cellStyle, $resultStyle);
-                            $_styleCache[$styleHash] = ['cell_style' => $cellStyle, 'result_style' => $resultStyle, 'style_idx' => $cellStyleIdx];
-                        }
-                        else {
+                            $_styleCache[$styleHash] = [
+                                'cell_style' => $cellStyle,
+                                'result_style' => $resultStyle,
+                                'style_idx' => $cellStyleIdx,
+                            ];
+                        } else {
                             $resultStyle = $_styleCache[$styleHash]['result_style'];
                             $cellStyleIdx = $_styleCache[$styleHash]['style_idx'];
                         }
@@ -1526,7 +1508,14 @@ class Sheet implements InterfaceSheetWriter
                         }
                     }
                     if ($cellValue !== null || $cellStyleIdx !== 0 || $numberFormatType !== 'n_auto') {
-                        $writer->_writeCell($this->fileWriter, $rowIdx + 1, $colIdx + 1, $cellValue, $numberFormatType, $cellStyleIdx);
+                        $writer->_writeCell(
+                            $this->fileWriter,
+                            $rowIdx + 1,
+                            $colIdx + 1,
+                            $cellValue,
+                            $numberFormatType,
+                            $cellStyleIdx
+                        );
                         $this->_setDimension($rowIdx + 1, $colIdx + 1);
                     }
                     $colIdx++;
@@ -1535,8 +1524,7 @@ class Sheet implements InterfaceSheetWriter
                     }
                 }
                 $this->fileWriter->write('</row>');
-            }
-            elseif ($rowAttrStr) {
+            } elseif ($rowAttrStr) {
                 $this->fileWriter->write('<row r="' . ($this->rowCountWritten + 1) . '" ' . $rowAttrStr . '/>');
             }
         }
@@ -1619,8 +1607,7 @@ class Sheet implements InterfaceSheetWriter
         if (isset($normStyle['font'])) {
             if (isset($this->defaultStyle['font'])) {
                 $this->defaultStyle['font'] = array_replace($this->defaultStyle['font'], $normStyle['font']);
-            }
-            else {
+            } else {
                 $this->defaultStyle['font'] = $normStyle['font'];
             }
         }
@@ -1777,17 +1764,18 @@ class Sheet implements InterfaceSheetWriter
     {
         $rowValues = [];
         $colNum = 0;
-        foreach($header as $key => $val) {
+        foreach ($header as $key => $val) {
             if (!is_int($key)) {
                 $rowValues[$colNum] = $key;
                 if (is_scalar($val)) {
                     $colStyles[$colNum + $this->offsetCol]['format'] = $val;
+                } else {
+                    $colStyles[$colNum + $this->offsetCol] = isset($colStyles[$colNum + $this->currentColIdx]) ? array_replace_recursive(
+                        $colStyles[$colNum + $this->currentColIdx],
+                        $val
+                    ) : $val;
                 }
-                else {
-                    $colStyles[$colNum + $this->offsetCol] = isset($colStyles[$colNum + $this->currentColIdx]) ? array_replace_recursive($colStyles[$colNum + $this->currentColIdx], $val) : $val;
-                }
-            }
-            else {
+            } else {
                 $rowValues[$colNum] = $val;
                 $colStyles[$colNum + $this->offsetCol] = null;
             }
@@ -1812,19 +1800,16 @@ class Sheet implements InterfaceSheetWriter
         $address = $this->_parseAddress($cellAddress);
         if (!isset($address['row'], $address['col'])) {
             ExceptionAddress::throwNew('Wrong cell address %s', print_r($address, 1));
-        }
-        elseif ($address['row'] <= $this->rowCountWritten) {
+        } elseif ($address['row'] <= $this->rowCountWritten) {
             ExceptionAddress::throwNew('Row number must be greater than written rows');
-        }
-        else {
+        } else {
             $cellAddress = $address;
         }
 
         if (isset($address['colIndex'], $address['rowIndex'])) {
             $this->currentColIdx = $address['colIndex'];
             $this->currentRowIdx = $address['rowIndex'];
-        }
-        else {
+        } else {
             while ($this->currentRowIdx < $cellAddress['row'] - 1) {
                 $this->nextRow();
             }
@@ -1859,17 +1844,14 @@ class Sheet implements InterfaceSheetWriter
         if (isset($address['width'], $address['range']) && $address['width'] > 1) {
             $this->mergeCells($address['range']);
             $this->currentColIdx += $address['width'];
-        }
-        else {
+        } else {
             $this->currentColIdx++;
         }
         if ($address['rowNum2'] === $address['rowNum1'] && $address['colNum2'] === $address['colNum1']) {
             $ref = 'cell';
-        }
-        elseif ($address['rowNum2'] === $address['rowNum1']) {
+        } elseif ($address['rowNum2'] === $address['rowNum1']) {
             $ref = 'row';
-        }
-        else {
+        } else {
             $ref = 'area';
         }
         $this->_touchEnd($address['rowNum2'] - 1, $address['colNum2'] - 1, $ref);
@@ -1913,31 +1895,34 @@ class Sheet implements InterfaceSheetWriter
      *
      * @return $this
      */
-    public function mergeCells($rangeSet, ?int $actionMode = 0): Sheet
+    public function mergeCells($rangeSet, ?int $actionMode = 0, bool $skipRangeCheck = false): Sheet
     {
-        foreach((array)$rangeSet as $range) {
+        foreach ((array)$rangeSet as $range) {
             if (isset($this->mergeCells[$range]) || empty($range)) {
                 // cells are already merged
                 continue;
             }
             $dimension = Excel::rangeDimension($range, true);
             // check intersection with saved merged cells
-            foreach ($this->mergeCells as $savedRange => $savedDimension) {
-                if (
-                    ((($dimension['rowNum1'] >= $savedDimension['rowNum1']) && ($dimension['rowNum1'] <= $savedDimension['rowNum2']))
-                        || (($dimension['rowNum2'] >= $savedDimension['rowNum1']) && ($dimension['rowNum2'] <= $savedDimension['rowNum2'])))
-                    && ((($dimension['colNum1'] >= $savedDimension['colNum1']) && ($dimension['colNum1'] <= $savedDimension['colNum2']))
-                        || (($dimension['colNum2'] >= $savedDimension['colNum1']) && ($dimension['colNum2'] <= $savedDimension['colNum2'])))
-                ) {
-                    if ($actionMode === 1) {
-                        unset($this->mergeCells[$savedRange]);
-                    }
-                    elseif ($actionMode === 2) {
-                        $dimension = [];
-                        break;
-                    }
-                    else {
-                        throw new Exception("Cannot merge cells $range because they are intersecting with $savedRange");
+
+            if (!$skipRangeCheck) {
+                foreach ($this->mergeCells as $savedRange => $savedDimension) {
+                    if (
+                        ((($dimension['rowNum1'] >= $savedDimension['rowNum1']) && ($dimension['rowNum1'] <= $savedDimension['rowNum2']))
+                            || (($dimension['rowNum2'] >= $savedDimension['rowNum1']) && ($dimension['rowNum2'] <= $savedDimension['rowNum2'])))
+                        && ((($dimension['colNum1'] >= $savedDimension['colNum1']) && ($dimension['colNum1'] <= $savedDimension['colNum2']))
+                            || (($dimension['colNum2'] >= $savedDimension['colNum1']) && ($dimension['colNum2'] <= $savedDimension['colNum2'])))
+                    ) {
+                        if ($actionMode === 1) {
+                            unset($this->mergeCells[$savedRange]);
+                        } elseif ($actionMode === 2) {
+                            $dimension = [];
+                            break;
+                        } else {
+                            throw new Exception(
+                                "Cannot merge cells $range because they are intersecting with $savedRange"
+                            );
+                        }
                     }
                 }
             }
@@ -1962,9 +1947,9 @@ class Sheet implements InterfaceSheetWriter
     public function mergeRelCells($rangeSet): Sheet
     {
         if (is_int($rangeSet)) {
-            $rangeSet = 'A' . $this->rowCountWritten . ':' . Excel::colLetter($rangeSet)  . $this->rowCountWritten;
+            $rangeSet = 'A' . $this->rowCountWritten . ':' . Excel::colLetter($rangeSet) . $this->rowCountWritten;
         }
-        foreach((array)$rangeSet as $range) {
+        foreach ((array)$rangeSet as $range) {
             if (isset($this->mergeCells[$range]) || empty($range)) {
                 // cells are already merged
                 continue;
@@ -2011,8 +1996,10 @@ class Sheet implements InterfaceSheetWriter
             if (!$this->open) {
                 $writer->writeSheetDataBegin($this);
             }
-            $maxRowIdx = max($this->cells['values'] ? max(array_keys($this->cells['values'])) : -1,
-                $this->cells['styles'] ? max(array_keys($this->cells['styles'])) : -1);
+            $maxRowIdx = max(
+                $this->cells['values'] ? max(array_keys($this->cells['values'])) : -1,
+                $this->cells['styles'] ? max(array_keys($this->cells['styles'])) : -1
+            );
             if ($maxRowIdx >= 0) {
                 // has values or styles
                 if ($maxRowIdx < $this->currentRowIdx) {
@@ -2023,15 +2010,13 @@ class Sheet implements InterfaceSheetWriter
                     if (isset($this->cells['values'][$rowIdx])) {
                         $values = $this->cells['values'][$rowIdx];
                         unset($this->cells['values'][$rowIdx]);
-                    }
-                    else {
+                    } else {
                         $values = [];
                     }
                     if (isset($this->cells['styles'][$rowIdx])) {
                         $styles = $this->cells['styles'][$rowIdx];
                         unset($this->cells['styles'][$rowIdx]);
-                    }
-                    else {
+                    } else {
                         $styles = [];
                     }
                     $rowSettings = $this->rowSettings[$rowIdx] ?? [];
@@ -2043,11 +2028,9 @@ class Sheet implements InterfaceSheetWriter
                         ksort($values);
                         ksort($styles);
                         $this->_writeRow($writer, $values, $rowSettings, $styles);
-                    }
-                    elseif ($rowSettings) {
+                    } elseif ($rowSettings) {
                         $this->_writeRow($writer, [null], $rowSettings, []);
-                    }
-                    else {
+                    } else {
                         //$this->rowCount++;
                         $this->_writeRow($writer, [], [], []);
                     }
@@ -2090,8 +2073,7 @@ class Sheet implements InterfaceSheetWriter
         if (!is_array($rowValues)) {
             $rowFieldNames = [0];
             $rowValues = [$rowValues];
-        }
-        else {
+        } else {
             $rowFieldNames = array_keys($rowValues);
             $rowValues = array_values($rowValues);
         }
@@ -2100,8 +2082,7 @@ class Sheet implements InterfaceSheetWriter
             if (!is_int($key)) {
                 $cellStyles = Excel::colKeysToIndexes($cellStyles);
             }
-        }
-        else {
+        } else {
             $cellStyles = [];
         }
 
@@ -2127,19 +2108,21 @@ class Sheet implements InterfaceSheetWriter
                 }
                 $this->lastTouch['area']['col_idx2'] = $colIdx;
                 if (isset($this->fieldStyles[$rowFieldNames[$colIdx]]) && isset($cellStyles[$colIdx])) {
-                    $cellComboStyle = array_merge_recursive($this->fieldStyles[$rowFieldNames[$colIdx]], $cellStyles[$colIdx]);
-                }
-                elseif (isset($this->fieldStyles[$rowFieldNames[$colIdx]])) {
+                    $cellComboStyle = array_merge_recursive(
+                        $this->fieldStyles[$rowFieldNames[$colIdx]],
+                        $cellStyles[$colIdx]
+                    );
+                } elseif (isset($this->fieldStyles[$rowFieldNames[$colIdx]])) {
                     $cellComboStyle = $this->fieldStyles[$rowFieldNames[$colIdx]];
-                }
-                elseif (isset($cellStyles[$colIdx])) {
+                } elseif (isset($cellStyles[$colIdx])) {
                     $cellComboStyle = $cellStyles[$colIdx];
-                }
-                else {
+                } else {
                     $cellComboStyle = null;
                 }
                 //$this->_setCellData(null, $rowValues[$colIdx] ?? null, $cellComboStyle);
-                $this->_setCellData(['col_idx' => $this->offsetCol + $colIdx, 'row_idx' => $this->currentRowIdx], $rowValues[$colIdx] ?? null, $cellComboStyle);
+                $this->_setCellData(['col_idx' => $this->offsetCol + $colIdx, 'row_idx' => $this->currentRowIdx],
+                    $rowValues[$colIdx] ?? null,
+                    $cellComboStyle);
             }
             $this->lastTouch['cell']['col_idx'] = ++$this->currentColIdx;
         }
@@ -2185,7 +2168,13 @@ class Sheet implements InterfaceSheetWriter
         if (!$writtenRows) {
             $this->currentRowIdx++;
             $this->currentColIdx = $this->offsetCol;
-            $this->_touch($this->currentRowIdx, $this->currentColIdx, $this->currentRowIdx, $this->currentColIdx, 'cell');
+            $this->_touch(
+                $this->currentRowIdx,
+                $this->currentColIdx,
+                $this->currentRowIdx,
+                $this->currentColIdx,
+                'cell'
+            );
         }
 
         return $this;
@@ -2224,8 +2213,7 @@ class Sheet implements InterfaceSheetWriter
         $coord = $area->getCoord();
         if (empty($this->totalArea['coord'])) {
             $this->totalArea['coord'] = $coord;
-        }
-        else {
+        } else {
             if ($this->totalArea['coord'][0]['row'] > $coord[0]['row']) {
                 $this->totalArea['coord'][0]['row'] = $coord[0]['row'];
             }
@@ -2296,15 +2284,13 @@ class Sheet implements InterfaceSheetWriter
                 $result['rowNum1'] = $result['rowNum2'] = $cellAddress['row'];
                 $result['colNum1'] = $result['colNum2'] = $cellAddress['col'];
             }
-        }
-        elseif (is_string($cellAddress)) {
+        } elseif (is_string($cellAddress)) {
             if ($rowOnly && preg_match('/^(\d+)(:(\d+))?$/', $cellAddress, $m)) {
                 $result['rowNum1'] = (int)$m[1];
                 $result['rowNum2'] = !empty($m[3]) ? (int)$m[3] : $result['rowNum1'];
                 $result['rowIndex'] = $result['rowNum1'] - 1;
                 $result['height'] = $result['rowNum2'] - $result['rowNum1'] + 1;
-            }
-            else {
+            } else {
                 $result = $this->_rangeDimension($cellAddress);
             }
         }
@@ -2326,8 +2312,7 @@ class Sheet implements InterfaceSheetWriter
             $relAddress = $cellAddress;
             $cellAddress = Excel::colLetter($colOffset) . ($this->rowCountWritten + $rowOffset);
             $dimension = Excel::rangeDimensionRelative($cellAddress, $relAddress, true);
-        }
-        else {
+        } else {
             // absolute address
             $dimension = Excel::rangeDimension($cellAddress, true);
         }
@@ -2378,26 +2363,28 @@ class Sheet implements InterfaceSheetWriter
      *
      * @return array
      */
-    protected function _setCellData($cellAddress, $value, $styles = null, ?bool $merge = false, ?bool $changeCurrent = false)
-    {
+    protected function _setCellData(
+        $cellAddress,
+        $value,
+        $styles = null,
+        ?bool $merge = false,
+        ?bool $changeCurrent = false
+    ) {
         $dimension = [];
         if (null === $cellAddress) {
             $rowIdx = $this->lastTouch['cell']['row_idx'];
             $colIdx = $this->lastTouch['cell']['col_idx'];
-        }
-        else {
+        } else {
             if (isset($cellAddress['row_idx'], $cellAddress['col_idx'])) {
                 $rowIdx = $cellAddress['row_idx'];
                 $colIdx = $cellAddress['col_idx'];
                 $this->lastTouch['cell'] = ['row_idx' => $rowIdx, 'col_idx' => $colIdx];
-            }
-            else {
+            } else {
                 if (isset($cellAddress['row'], $cellAddress['col'])) {
                     $row = $cellAddress['row'];
                     $col = $cellAddress['col'];
                     $dimension = $cellAddress;
-                }
-                else {
+                } else {
                     $dimension = $this->_parseAddress($cellAddress);
                     $row = $dimension['row'];
                     $col = $dimension['col'];
@@ -2429,11 +2416,12 @@ class Sheet implements InterfaceSheetWriter
             if (is_scalar($value)
                 || ($value instanceof RichText)
                 // it's a formula & value ['=A1+B2', 123]
-                || (is_array($value) && !empty($value[0]) && is_string($value[0]) && ($value[0][0] === '=') && count($value) === 2)
+                || (is_array($value) && !empty($value[0]) && is_string($value[0]) && ($value[0][0] === '=') && count(
+                        $value
+                    ) === 2)
             ) {
                 $this->cells['values'][$rowIdx][$colIdx] = $value;
-            }
-            else {
+            } else {
                 $addr = Excel::cellAddress($colIdx + 1, $rowIdx + 1);
                 Exception::throwNew('Value for cell %s must be scalar', $addr);
             }
@@ -2493,8 +2481,7 @@ class Sheet implements InterfaceSheetWriter
     {
         if (empty($value)) {
             $value = null;
-        }
-        elseif (strpos($value, '=') !== 0) {
+        } elseif (strpos($value, '=') !== 0) {
             $value = '=' . $value;
         }
 
@@ -2544,8 +2531,7 @@ class Sheet implements InterfaceSheetWriter
             for ($col = $dimension['colNum1'] - 1; $col < $dimension['colNum2']; $col++) {
                 if ($mergeStyles && isset($this->cells['styles'][$row][$col])) {
                     $this->cells['styles'][$row][$col] = array_merge($this->cells['styles'][$row][$col], $style);
-                }
-                else {
+                } else {
                     $this->cells['styles'][$row][$col] = $style;
                 }
                 if (!isset($this->cells['values'][$row][$col])) {
@@ -2617,7 +2603,10 @@ class Sheet implements InterfaceSheetWriter
     public function setOuterBorder(string $range, $style): Sheet
     {
         $borderStyle = Style::borderOptions($style);
-        $this->withRange($range)->applyOuterBorder($borderStyle['border-left-style'], $borderStyle['border-left-color']);
+        $this->withRange($range)->applyOuterBorder(
+            $borderStyle['border-left-style'],
+            $borderStyle['border-left-color']
+        );
 
 
         return $this;
@@ -2631,10 +2620,10 @@ class Sheet implements InterfaceSheetWriter
         $writer = $this->excel->getWriter();
         if ($this->open) {
             $this->writeAreasRows($writer);
-        }
-        else {
+        } else {
             $writer->writeSheetDataBegin($this);
         }
+
         return $this;
     }
 
@@ -2688,9 +2677,13 @@ class Sheet implements InterfaceSheetWriter
                     ksort($rowValues);
                     // array of all styles
                     ksort($cellStyles);
-                    $this->_writeRow($writer, array_values($rowValues), [], $cellStyles ? array_values($cellStyles) : []);
-                }
-                else {
+                    $this->_writeRow(
+                        $writer,
+                        array_values($rowValues),
+                        [],
+                        $cellStyles ? array_values($cellStyles) : []
+                    );
+                } else {
                     //$this->_writeRow($writer, [null]);
                     $this->_writeRow($writer, isset($this->rowSettings[$rowIdx]) ? [null] : []);
                 }
@@ -2797,8 +2790,7 @@ class Sheet implements InterfaceSheetWriter
             $rowIdx = $addr['row_idx'];
             $colIdx = $addr['col_idx'];
             $ref = 'cell';
-        }
-        else {
+        } else {
             $rowIdx = $this->lastTouch['cell']['row_idx'];
             $colIdx = $this->lastTouch['cell']['col_idx'];
             $ref = $this->lastTouch['ref'];
@@ -2807,35 +2799,36 @@ class Sheet implements InterfaceSheetWriter
         if ($ref === 'cell') {
             if ($replace || !isset($this->cells['styles'][$rowIdx][$colIdx][$key])) {
                 $this->cells['styles'][$rowIdx][$colIdx][$key] = $options;
-            }
-            else {
-                $this->cells['styles'][$rowIdx][$colIdx][$key] = array_replace_recursive($this->cells['styles'][$rowIdx][$colIdx][$key], $options);
+            } else {
+                $this->cells['styles'][$rowIdx][$colIdx][$key] = array_replace_recursive(
+                    $this->cells['styles'][$rowIdx][$colIdx][$key],
+                    $options
+                );
             }
             if (!isset($this->cells['values'][$rowIdx][$colIdx])) {
                 $this->cells['values'][$rowIdx][$colIdx] = '';
             }
-        }
-        elseif ($ref === 'area') {
+        } elseif ($ref === 'area') {
             for ($rowIdx = $this->lastTouch['area']['row_idx1']; $rowIdx <= $this->lastTouch['area']['row_idx2']; $rowIdx++) {
                 for ($colIdx = $this->lastTouch['area']['col_idx1']; $colIdx <= $this->lastTouch['area']['col_idx2']; $colIdx++) {
                     if ($replace || !isset($this->cells['styles'][$rowIdx][$colIdx][$key])) {
                         $this->cells['styles'][$rowIdx][$colIdx][$key] = $options;
-                    }
-                    else {
-                        $this->cells['styles'][$rowIdx][$colIdx][$key] = array_replace_recursive($this->cells['styles'][$rowIdx][$colIdx][$key], $options);
+                    } else {
+                        $this->cells['styles'][$rowIdx][$colIdx][$key] = array_replace_recursive(
+                            $this->cells['styles'][$rowIdx][$colIdx][$key],
+                            $options
+                        );
                     }
                     if (!isset($this->cells['values'][$rowIdx][$colIdx])) {
                         $this->cells['values'][$rowIdx][$colIdx] = '';
                     }
                 }
             }
-        }
-        else {
+        } else {
             $rowIdx = $this->lastTouch['row']['row_idx'];
             if ($replace || !isset($this->rowStyles[$rowIdx][$key])) {
                 $this->rowStyles[$rowIdx][$key] = $options;
-            }
-            else {
+            } else {
                 $this->rowStyles[$rowIdx][$key] = array_replace_recursive($this->rowStyles[$rowIdx][$key], $options);
             }
         }
@@ -3014,14 +3007,20 @@ class Sheet implements InterfaceSheetWriter
     {
         if ($range) {
             $dimension = $this->_rangeDimension($range);
-        }
-        else {
-            $cell1 = Excel::cellAddress($this->lastTouch['area']['row_idx1'] + 1, $this->lastTouch['area']['col_idx1'] + 1, true);
-            $cell2 = Excel::cellAddress($this->lastTouch['area']['row_idx2'] + 1, $this->lastTouch['area']['col_idx2'] + 1, true);
+        } else {
+            $cell1 = Excel::cellAddress(
+                $this->lastTouch['area']['row_idx1'] + 1,
+                $this->lastTouch['area']['col_idx1'] + 1,
+                true
+            );
+            $cell2 = Excel::cellAddress(
+                $this->lastTouch['area']['row_idx2'] + 1,
+                $this->lastTouch['area']['col_idx2'] + 1,
+                true
+            );
             if ($cell1 === $cell2) {
                 $address = $cell1;
-            }
-            else {
+            } else {
                 $address = $cell1 . ':' . $cell2;
             }
             $dimension = [
@@ -3042,7 +3041,9 @@ class Sheet implements InterfaceSheetWriter
             foreach ($this->excel->getSheets() as $sheet) {
                 foreach ($sheet->getNamedRanges() as $range) {
                     if (mb_strtolower($range['name']) === mb_strtolower($name)) {
-                        ExceptionRangeName::throwNew('Named range "' . $name . '" already exists on sheet "' . $sheet->sheetName . '"');
+                        ExceptionRangeName::throwNew(
+                            'Named range "' . $name . '" already exists on sheet "' . $sheet->sheetName . '"'
+                        );
                     }
                 }
             }
@@ -3081,33 +3082,35 @@ class Sheet implements InterfaceSheetWriter
      */
     public function addNote($cell, $comment = null, array $noteStyle = []): Sheet
     {
-        if (func_num_args() === 1 || (func_num_args() === 2 && is_array($comment)) ) {
-            if ( func_num_args() === 2) {
+        if (func_num_args() === 1 || (func_num_args() === 2 && is_array($comment))) {
+            if (func_num_args() === 2) {
                 $noteStyle = $comment;
             }
             $comment = $cell;
             $rowIdx = $this->lastTouch['cell']['row_idx'];
             $colIdx = $this->lastTouch['cell']['col_idx'];
             $cell = Excel::cellAddress($rowIdx + 1, $colIdx + 1);
-        }
-        else {
+        } else {
             $dimension = $this->_rangeDimension($cell);
             $cell = $dimension['cell1'];
             $rowIdx = $dimension['rowIndex'];
             $colIdx = $dimension['colIndex'];
         }
         if ($cell) {
-            $marginLeft = number_format(self::NOTE_LEFT_OFFSET + self::NOTE_LEFT_INC * ($colIdx + 1), 2, '.', '') . 'pt';
+            $marginLeft = number_format(
+                    self::NOTE_LEFT_OFFSET + self::NOTE_LEFT_INC * ($colIdx + 1),
+                    2,
+                    '.',
+                    ''
+                ) . 'pt';
             if ($rowIdx === 0) {
                 $marginTop = self::NOTE_DEFAULT_TOP;
-            }
-            else {
+            } else {
                 $marginTop = number_format(self::NOTE_TOP_OFFSET + self::NOTE_TOP_INC * $rowIdx, 2, '.', '') . 'pt';
             }
             if (!empty($noteStyle['fill_color'])) {
                 $noteStyle['fill_color'] = '#' . substr(Style::normalizeColor($noteStyle['fill_color']), 2);
-            }
-            elseif (!empty($noteStyle['bg_color'])) {
+            } elseif (!empty($noteStyle['bg_color'])) {
                 $noteStyle['fill_color'] = '#' . substr(Style::normalizeColor($noteStyle['bg_color']), 2);
             }
             if (!empty($noteStyle['width']) && (is_int($noteStyle['width']) || is_float($noteStyle['width']))) {
@@ -3119,8 +3122,7 @@ class Sheet implements InterfaceSheetWriter
 
             if ($comment instanceof RichText) {
                 $text = $comment->outXml();
-            }
-            else {
+            } else {
                 $text = (new RichText(htmlspecialchars($comment)))->outXml();
             }
             $this->notes[$cell] = [
@@ -3128,13 +3130,13 @@ class Sheet implements InterfaceSheetWriter
                 'row_index' => $rowIdx,
                 'col_index' => $colIdx,
                 'text' => $text,
-                'style' => array_merge( [
+                'style' => array_merge([
                     'width' => self::NOTE_DEFAULT_WIDTH,
                     'height' => self::NOTE_DEFAULT_HEIGHT,
                     'margin_left' => $marginLeft,
                     'margin_top' => $marginTop,
                     'fill_color' => self::NOTE_DEFAULT_COLOR,
-                ], $noteStyle ),
+                ], $noteStyle),
             ];
             $this->_setDimension($rowIdx + 1, $colIdx + 1);
             if (!isset($this->relationships['legacyDrawing'])) {
@@ -3189,8 +3191,7 @@ class Sheet implements InterfaceSheetWriter
             $rowIdx = $this->lastTouch['cell']['row_idx'];
             $colIdx = $this->lastTouch['cell']['col_idx'];
             $cell = Excel::cellAddress($rowIdx + 1, $colIdx + 1);
-        }
-        else {
+        } else {
             $dimension = $this->_rangeDimension($cell);
             $cell = $dimension['cell1'];
             $rowIdx = $dimension['rowIndex'];
@@ -3210,13 +3211,11 @@ class Sheet implements InterfaceSheetWriter
                         $ratio = $imageStyle['width'] / $imageData['width'];
                         $imageData['width'] = $imageStyle['width'];
                         $imageData['height'] = (int)round($imageData['height'] * $ratio);
-                    }
-                    elseif (empty($imageStyle['width']) && !empty($imageStyle['height'])) {
+                    } elseif (empty($imageStyle['width']) && !empty($imageStyle['height'])) {
                         $ratio = $imageStyle['height'] / $imageData['height'];
                         $imageData['width'] = (int)round($imageData['width'] * $ratio);
                         $imageData['height'] = $imageStyle['height'];
-                    }
-                    else {
+                    } else {
                         $imageData['width'] = $imageStyle['width'];
                         $imageData['height'] = $imageStyle['height'];
                     }
@@ -3245,7 +3244,6 @@ class Sheet implements InterfaceSheetWriter
      */
     public function getImages(): array
     {
-
         return $this->media['images'] ?? [];
     }
 
@@ -3556,15 +3554,12 @@ class Sheet implements InterfaceSheetWriter
         if (preg_match('/^([\d.]+)\s?(mm|cm|in)/', $value, $m)) {
             if ($m[2] === 'cm') {
                 $value = (float)$m[1] * 0.39;
-            }
-            elseif ($m[2] === 'mm') {
+            } elseif ($m[2] === 'mm') {
                 $value = (float)$m[1] * 0.039;
-            }
-            else {
+            } else {
                 $value = (float)$m[1];
             }
-        }
-        else {
+        } else {
             $value = (float)$value;
         }
         $this->bottomNodesOptions['pageMargins'][$key] = number_format($value, 1, '.', '');
@@ -3735,11 +3730,9 @@ class Sheet implements InterfaceSheetWriter
     {
         if (strpos($range, ',')) {
             $ranges = explode(',', $range);
-        }
-        elseif (strpos($range, ';')) {
+        } elseif (strpos($range, ';')) {
             $ranges = explode(';', $range);
-        }
-        else {
+        } else {
             $ranges = [$range];
         }
         $address = '';
@@ -3748,7 +3741,9 @@ class Sheet implements InterfaceSheetWriter
             // checking intersections
             foreach ($this->printAreas as $printArea) {
                 if ($this->_checkIntersection($dimension, $printArea)) {
-                    throw new Exception('Print areas should not overlap (' . $printArea['localRange'] . ' & ' . $dimension['localRange'] . ')');
+                    throw new Exception(
+                        'Print areas should not overlap (' . $printArea['localRange'] . ' & ' . $dimension['localRange'] . ')'
+                    );
                 }
             }
             $this->printAreas[] = $dimension;
@@ -3852,53 +3847,74 @@ class Sheet implements InterfaceSheetWriter
                 $result[$n]['_items'] = [
                     [
                         '_tag' => 'pane',
-                        '_attr' => ['ySplit' => $this->freezeRows, 'xSplit' => $this->freezeColumns, 'topLeftCell' => Excel::cellAddress($paneRow, $paneCol), 'activePane' => 'bottomRight', 'state' => 'frozen'],
+                        '_attr' => [
+                            'ySplit' => $this->freezeRows,
+                            'xSplit' => $this->freezeColumns,
+                            'topLeftCell' => Excel::cellAddress($paneRow, $paneCol),
+                            'activePane' => 'bottomRight',
+                            'state' => 'frozen',
+                        ],
                     ],
                     [
                         '_tag' => 'selection',
-                        '_attr' => ['pane' => 'topRight', 'activeCell' => Excel::cellAddress($paneRow, 1), 'sqref' => Excel::cellAddress($paneRow, 1)],
+                        '_attr' => [
+                            'pane' => 'topRight',
+                            'activeCell' => Excel::cellAddress($paneRow, 1),
+                            'sqref' => Excel::cellAddress($paneRow, 1),
+                        ],
                     ],
                     [
                         '_tag' => 'selection',
-                        '_attr' => ['pane' => 'bottomLeft', 'activeCell' => Excel::cellAddress(1, $paneCol), 'sqref' => Excel::cellAddress(1, $paneCol)],
+                        '_attr' => [
+                            'pane' => 'bottomLeft',
+                            'activeCell' => Excel::cellAddress(1, $paneCol),
+                            'sqref' => Excel::cellAddress(1, $paneCol),
+                        ],
                     ],
                     [
                         '_tag' => 'selection',
                         '_attr' => ['pane' => 'bottomRight', 'activeCell' => $activeCell, 'sqref' => $activeRef],
                     ],
                 ];
-            }
-            elseif ($this->freezeRows) {
+            } elseif ($this->freezeRows) {
                 // frozen rows only
                 $activeCell = $this->activeCell ?? Excel::cellAddress($paneRow, 1);
                 $activeRef = $this->activeRef ?? $activeCell;
                 $result[$n]['_items'] = [
                     [
                         '_tag' => 'pane',
-                        '_attr' => ['ySplit' => $this->freezeRows, 'topLeftCell' => Excel::cellAddress($paneRow, 1), 'activePane' => 'bottomRight', 'state' => 'frozen'],
+                        '_attr' => [
+                            'ySplit' => $this->freezeRows,
+                            'topLeftCell' => Excel::cellAddress($paneRow, 1),
+                            'activePane' => 'bottomRight',
+                            'state' => 'frozen',
+                        ],
                     ],
                     [
                         '_tag' => 'selection',
                         '_attr' => ['pane' => 'bottomLeft', 'activeCell' => $activeCell, 'sqref' => $activeRef],
                     ],
                 ];
-            }
-            elseif ($this->freezeColumns) {
+            } elseif ($this->freezeColumns) {
                 // frozen cols only
                 $activeCell = $this->activeCell ?? Excel::cellAddress(1, $paneCol);
                 $activeRef = $this->activeRef ?? $activeCell;
                 $result[$n]['_items'] = [
                     [
                         '_tag' => 'pane',
-                        '_attr' => ['xSplit' => $this->freezeColumns, 'topLeftCell' => Excel::cellAddress(1, $paneCol), 'activePane' => 'topRight', 'state' => 'frozen'],
+                        '_attr' => [
+                            'xSplit' => $this->freezeColumns,
+                            'topLeftCell' => Excel::cellAddress(1, $paneCol),
+                            'activePane' => 'topRight',
+                            'state' => 'frozen',
+                        ],
                     ],
                     [
                         '_tag' => 'selection',
                         '_attr' => ['pane' => 'topRight', 'activeCell' => $activeCell, 'sqref' => $activeRef],
                     ],
                 ];
-            }
-            else {
+            } else {
                 // not frozen
                 $activeCell = $this->activeCell ?? $this->minCell();
                 $activeRef = $this->activeRef ?? $activeCell;
@@ -3924,7 +3940,6 @@ class Sheet implements InterfaceSheetWriter
      */
     public function getProtection(): array
     {
-
         return $this->protection;
     }
 
@@ -3933,7 +3948,6 @@ class Sheet implements InterfaceSheetWriter
      */
     public function getPageMargins(): array
     {
-
         return $this->bottomNodesOptions['pageMargins'] ?? [];
     }
 
@@ -4150,8 +4164,7 @@ class Sheet implements InterfaceSheetWriter
                 'col_idx' => $this->lastTouch['area']['col_idx1'],
             ];
             $this->_setStyleOptions($addr, Style::BORDER, $options);
-        }
-        else {
+        } else {
             $rowMin = $this->lastTouch['area']['row_idx1'];
             $rowMax = $this->lastTouch['area']['row_idx2'];
             $colMin = $this->lastTouch['area']['col_idx1'];
@@ -4241,7 +4254,6 @@ class Sheet implements InterfaceSheetWriter
                     $this->_setStyleOptions($addr, Style::BORDER, $options2);
                 }
             }
-
         }
 
         return $this;
@@ -4257,7 +4269,6 @@ class Sheet implements InterfaceSheetWriter
     {
         if ($this->lastTouch['area']['row_idx1'] < $this->lastTouch['area']['row_idx2']
             || $this->lastTouch['area']['col_idx1'] < $this->lastTouch['area']['col_idx2']) {
-
             $rowMin = $this->lastTouch['area']['row_idx1'];
             $rowMax = $this->lastTouch['area']['row_idx2'];
             $colMin = $this->lastTouch['area']['col_idx1'];
@@ -4312,8 +4323,12 @@ class Sheet implements InterfaceSheetWriter
      *
      * @return $this
      */
-    public function applyFont(string $fontName, ?int $fontSize = null, ?string $fontStyle = null, ?string $fontColor = null): Sheet
-    {
+    public function applyFont(
+        string $fontName,
+        ?int $fontSize = null,
+        ?string $fontStyle = null,
+        ?string $fontColor = null
+    ): Sheet {
         $font = ['font-name' => $fontName];
         if ($fontSize) {
             $font['font-size'] = $fontSize;
@@ -4367,12 +4382,12 @@ class Sheet implements InterfaceSheetWriter
         return $this;
     }
 
-	public function applyTextRotation(int $degrees): Sheet
-	{
-		$this->_setStyleOptions([], 'format', [ 'format-text-rotation' => $degrees ] );
+    public function applyTextRotation(int $degrees): Sheet
+    {
+        $this->_setStyleOptions([], 'format', ['format-text-rotation' => $degrees]);
 
-		return $this;
-	}
+        return $this;
+    }
 
     public function applyFontStyleBold(): Sheet
     {
@@ -4489,7 +4504,9 @@ class Sheet implements InterfaceSheetWriter
      */
     public function applyTextCenter(): Sheet
     {
-        $this->_setStyleOptions([], 'format', ['format-align-horizontal' => 'center', 'format-align-vertical' => 'center']);
+        $this->_setStyleOptions([],
+            'format',
+            ['format-align-horizontal' => 'center', 'format-align-vertical' => 'center']);
 
         return $this;
     }
@@ -4527,8 +4544,7 @@ class Sheet implements InterfaceSheetWriter
     {
         if (is_array($format)) {
             $this->_setStyleOptions([], 'format', $format);
-        }
-        else {
+        } else {
             if ($format && $format[0] === '@') {
                 $format = strtoupper($format);
             }
