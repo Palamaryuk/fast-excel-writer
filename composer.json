@@ -1,5 +1,5 @@
 {
-    "name": "palamaryuk/fast-excel-writer",
+    "name": "avadim/fast-excel-writer",
     "description": "Lightweight and very fast XLSX Excel Spreadsheet Writer in PHP",
     "keywords": [
         "php",
@@ -18,7 +18,7 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "palamaryuk\\FastExcelWriter\\": "./src/FastExcelWriter"
+            "avadim\\FastExcelWriter\\": "./src/FastExcelWriter"
         }
     },
     "require": {
